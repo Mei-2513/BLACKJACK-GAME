@@ -110,7 +110,7 @@ public class BlackJack {
         exitMessageTimer.setRepeats(false);
         gamePanel.add(resultLabel);
         startGame();
-        ConfigFrame configFrame = new ConfigFrame();
+        ConfigFrame configFrame = ConfigFrame.getInstance();
         configFrame.setVisible(true);
 
         // Espera hasta que el usuario haya ingresado la información y cerrado la ventana de configuración
@@ -369,6 +369,7 @@ public class BlackJack {
             int choice = JOptionPane.showConfirmDialog(frame, "¿Quieres salir?", "Fin del juego", JOptionPane.YES_NO_OPTION);
             if (choice == JOptionPane.YES_OPTION) {
                 System.exit(0);
+                frame.dispose();
             } else {
                 // Lógica adicional si el jugador elige no salir
 
@@ -381,11 +382,5 @@ public class BlackJack {
             }
         });
     }
-
-
-
-
-
-
 
 }

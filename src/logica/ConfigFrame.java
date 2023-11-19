@@ -2,6 +2,8 @@ package logica;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ConfigFrame extends JFrame {
     private JTextField ipField;
@@ -9,6 +11,7 @@ public class ConfigFrame extends JFrame {
     private JTextField playerNameField;
     private boolean configured = false;
     private String playerName;
+    private static ConfigFrame instance;
 
     private JRadioButton dealerButton;
     private JRadioButton playerButton;
@@ -62,8 +65,23 @@ public class ConfigFrame extends JFrame {
         add(serverPanel);
         add(portPanel);
 
-        JButton connectButton = createConnectButton("Conectar");
+        JButton connectButton = new JButton("Conectar");
+        connectButton.setBackground(Color.LIGHT_GRAY);
+        connectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                configured = true;
+                playerName = playerNameField.getText();
+                ConfigFrame.getInstance().setVisible(false); // Oculta la ventana en lugar de cerrarla
+            }
+        });
+
+
         add(connectButton);
+
+
+
+
 
         // Añade un ActionListener a los botones de opción para mostrar u ocultar los paneles
         dealerButton.addActionListener(e -> {
@@ -77,6 +95,13 @@ public class ConfigFrame extends JFrame {
 
         // Desmarca todos los botones de opción
         group.clearSelection();
+    }
+
+    public static ConfigFrame getInstance() {
+        if (instance == null) {
+            instance = new ConfigFrame();
+        }
+        return instance;
     }
 
     private JLabel createLabel(String text, Color textColor) {
