@@ -8,7 +8,7 @@ public class ConfigFrame extends JFrame {
     private JTextField portField;
     private JTextField playerNameField;
     private boolean configured = false;
-    private String playerName; // Almacena el nombre ingresado por el usuario
+    private String playerName;
 
     private JRadioButton dealerButton;
     private JRadioButton playerButton;
@@ -20,19 +20,17 @@ public class ConfigFrame extends JFrame {
     public ConfigFrame() {
         super("Configuración de conexión");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 300);
-        setLayout(new GridLayout(6, 1));  // Cambia a un GridLayout con 6 filas y 1 columna
+        setSize(400, 300);
+        setLayout(new GridLayout(7, 1));  // Ajusta el GridLayout
         setLocationRelativeTo(null);
 
-        // Establece el color de fondo del panel
-        getContentPane().setBackground(Color.DARK_GRAY);
+        // Establece el color de fondo del panel principal
+        getContentPane().setBackground(new Color(53, 101, 77));
 
-        // Crea etiquetas con texto en blanco
-        JLabel nameLabel = new JLabel("Ingrese su nombre:");
-        nameLabel.setForeground(Color.WHITE);
-        add(nameLabel);
+        // Crea etiquetas con texto en negro y añádelas al panel principal
+        add(createLabel("Ingrese su nombre:", Color.BLACK));
 
-        playerNameField = new JTextField(20);  // Ajusta el tamaño del campo de texto
+        playerNameField = createTextField(20);
         add(playerNameField);
 
         // Crea los botones de opción
@@ -44,34 +42,27 @@ public class ConfigFrame extends JFrame {
         group.add(dealerButton);
         group.add(playerButton);
 
-        // Añade los botones de opción al panel
+        // Añade los botones de opción al panel principal
         add(dealerButton);
         add(playerButton);
 
         // Crea un panel para los campos del servidor
         serverPanel = new JPanel();
-        serverPanel.add(new JLabel("Dirección IP del servidor:"));
-        ipField = new JTextField(15);  // Ajusta el tamaño del campo de texto
+        serverPanel.add(createLabel("Dirección IP del servidor:", Color.BLACK));
+        ipField = createTextField(15);
         serverPanel.add(ipField);
 
         // Crea un panel para el campo del puerto
         portPanel = new JPanel();
-        portPanel.add(new JLabel("Puerto del servidor:"));
-        portField = new JTextField(5);  // Ajusta el tamaño del campo de texto
+        portPanel.add(createLabel("Puerto del servidor:", Color.BLACK));
+        portField = createTextField(5);
         portPanel.add(portField);
 
         // Añade los paneles al panel principal
         add(serverPanel);
         add(portPanel);
 
-        JButton connectButton = new JButton("Conectar");
-        connectButton.setBackground(Color.LIGHT_GRAY);
-        connectButton.addActionListener(e -> {
-            configured = true;
-            playerName = playerNameField.getText(); // Almacena el nombre ingresado
-            dispose(); // Cierra la ventana después de la configuración
-        });
-
+        JButton connectButton = createConnectButton("Conectar");
         add(connectButton);
 
         // Añade un ActionListener a los botones de opción para mostrar u ocultar los paneles
@@ -86,6 +77,28 @@ public class ConfigFrame extends JFrame {
 
         // Desmarca todos los botones de opción
         group.clearSelection();
+    }
+
+    private JLabel createLabel(String text, Color textColor) {
+        JLabel label = new JLabel(text);
+        label.setForeground(textColor);
+        return label;
+    }
+
+    private JTextField createTextField(int columns) {
+        JTextField textField = new JTextField(columns);
+        return textField;
+    }
+
+    private JButton createConnectButton(String text) {
+        JButton connectButton = new JButton(text);
+        connectButton.setBackground(new Color(176, 224, 230)); // Color turquesa
+        connectButton.addActionListener(e -> {
+            configured = true;
+            playerName = playerNameField.getText();
+            dispose();
+        });
+        return connectButton;
     }
 
     public String getPlayerName() {

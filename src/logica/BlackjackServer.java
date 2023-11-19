@@ -30,8 +30,9 @@ public class BlackjackServer {
                 players.add(player);
 
                 // Manejar la conexión del jugador en un hilo separado
-                Thread playerThread = new Thread(new PlayerHandler(player));
-                playerThread.start();
+                BlackJack game = new BlackJack(); // Crear una instancia de BlackJack
+                PlayerHandler playerHandler = new PlayerHandler(player, game); // Pasar la instancia de BlackJack
+
 
                 // Añade el crupier y comienza el juego solo cuando se conecten exactamente dos jugadores humanos
                 if (playerCount == 2 && players.size() == 2) {

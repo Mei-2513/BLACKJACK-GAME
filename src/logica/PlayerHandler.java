@@ -8,15 +8,21 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
 public class PlayerHandler implements Runnable {
     private Player player;
     private BufferedReader input;
     private PrintWriter output;
     private BlackJack game; // Referencia al juego de Blackjack
 
-    public PlayerHandler(Player player) {
+    public PlayerHandler(Player player, BlackJack game) {
         this.player = player;
-        this.game = game;
+        this.game = game; // Asigna la referencia correcta al juego
         try {
             Socket socket = player.getSocket();
             this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -25,6 +31,8 @@ public class PlayerHandler implements Runnable {
             e.printStackTrace();
         }
     }
+
+
 
     @Override
     public void run() {
