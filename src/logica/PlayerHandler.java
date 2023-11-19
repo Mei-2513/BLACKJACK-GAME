@@ -1,4 +1,5 @@
 
+
 package logica;
 
 import java.io.BufferedReader;
@@ -8,13 +9,16 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class PlayerHandler implements Runnable {
-    private Socket clientSocket;
+    private Player player;
     private BufferedReader input;
     private PrintWriter output;
+    private BlackJack game; // Referencia al juego de Blackjack
 
-    public PlayerHandler(Socket socket) {
-        this.clientSocket = socket;
+    public PlayerHandler(Player player) {
+        this.player = player;
+        this.game = game;
         try {
+            Socket socket = player.getSocket();
             this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.output = new PrintWriter(socket.getOutputStream(), true);
         } catch (IOException e) {
@@ -25,23 +29,23 @@ public class PlayerHandler implements Runnable {
     @Override
     public void run() {
         try {
-            // Aquí manejas la comunicación con el jugador, envías y recibes mensajes
-            // Puedes usar input.readLine() para leer mensajes del jugador
-            // Y output.println() para enviar mensajes al jugador
-
-            // Envía un mensaje al jugador para que espere hasta que se conecten los demás jugadores
-            output.println("Espera a que se conecten los demás jugadores");
-
-            // Aquí puedes agregar más lógica para manejar la interacción con el jugador
-            // Por ejemplo, puedes leer un mensaje del jugador y actuar en consecuencia
-            String message = input.readLine();
-            System.out.println("Mensaje del jugador: " + message);
-
+            String message;
+            while ((message = input.readLine()) != null) {
+                if (player.isDealer()) {
+                    // Lógica para manejar al crupier
+                    // Puedes usar métodos de la clase BlackJack aquí
+                    System.out.println("Mensaje del crupier: " + message);
+                } else {
+                    // Lógica para manejar a los jugadores humanos
+                    // Puedes usar métodos de la clase BlackJack aquí
+                    System.out.println("Mensaje del jugador: " + message);
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                clientSocket.close();
+                player.getSocket().close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

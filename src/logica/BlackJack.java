@@ -16,6 +16,7 @@ public class BlackJack {
     private PrintWriter out;
     private BufferedReader in;
     private Scanner scanner;
+    private Timer exitMessageTimer;
 
     //dealer
     Card hiddenCard;
@@ -34,6 +35,7 @@ public class BlackJack {
 
     int cardWidth = 110; //ratio should 1/1.4
     int cardHeight = 154;
+    JLabel resultLabel = new JLabel();
 
     JFrame frame = new JFrame("Black Jack");
     JPanel gamePanel = new JPanel() {
@@ -103,6 +105,9 @@ public class BlackJack {
     JButton stayButton = new JButton("Stay");
 
     public BlackJack() {
+        exitMessageTimer = new Timer(2000, e -> showExitMessage()); // 2000 milisegundos (2 segundos)
+        exitMessageTimer.setRepeats(false);
+        gamePanel.add(resultLabel);
         startGame();
         ConfigFrame configFrame = new ConfigFrame();
         configFrame.setVisible(true);
@@ -204,18 +209,21 @@ public class BlackJack {
     }
 
     public void nextTurn() {
-        // Comprueba si el jugador ha ganado o perdido
         if (playerSum > 21) {
-            System.out.println("Has perdido!");
-            // Aquí puedes agregar código para terminar el juego
+            resultLabel.setText("¡Has perdido!");
+            gamePanel.repaint();
+            exitMessageTimer.start(); // Inicia el temporizador después de perder
         } else if (dealerSum > 21) {
-            System.out.println("Has ganado!");
-            // Aquí puedes agregar código para terminar el juego
+            resultLabel.setText("¡Has ganado!");
+            gamePanel.repaint();
+            exitMessageTimer.start(); // Inicia el temporizador después de ganar
         } else {
-            // Si nadie ha ganado o perdido, pasa al siguiente turno
-            // Aquí puedes agregar código para manejar el siguiente turno
+            // Lógica adicional según tus requisitos
         }
     }
+
+
+
 
 
     private void readAndDisplayPlayerInfo() {
@@ -332,6 +340,32 @@ public class BlackJack {
             dealerAceCount -= 1;
         }
         return dealerSum;
+    }
+
+    private void showExitMessage() {
+        int choice = JOptionPane.showConfirmDialog(frame, "¿Quieres salir?", "Fin del juego", JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        } else {
+            // Lógica adicional si el jugador elige no salir
+
+            // Reactivar los botones para que el jugador pueda seguir jugando
+            hitButton.setEnabled(true);
+            stayButton.setEnabled(true);
+            // Reiniciar el juego llamando al método restartGame()
+            restartGame();
+        }
+    }
+
+    private void restartGame() {
+        playerHand.clear();
+        dealerHand.clear();
+        playerSum = 0;
+        dealerSum = 0;
+        playerAceCount = 0;
+        dealerAceCount = 0;
+        gamePanel.repaint();
+
     }
 
 
