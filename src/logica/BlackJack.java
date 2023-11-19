@@ -166,8 +166,10 @@ public class BlackJack {
                     hitButton.setEnabled(false);
                 }
                 gamePanel.repaint();
+                nextTurn();
             }
         });
+
 
         stayButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -182,6 +184,7 @@ public class BlackJack {
                     dealerHand.add(card);
                 }
                 gamePanel.repaint();
+                nextTurn();
             }
         });
         Thread receiveThread = new Thread(() -> {
@@ -199,6 +202,45 @@ public class BlackJack {
         });
         receiveThread.start();
     }
+
+    public void nextTurn() {
+        // Comprueba si el jugador ha ganado o perdido
+        if (playerSum > 21) {
+            System.out.println("Has perdido!");
+            // Aquí puedes agregar código para terminar el juego
+        } else if (dealerSum > 21) {
+            System.out.println("Has ganado!");
+            // Aquí puedes agregar código para terminar el juego
+        } else {
+            // Si nadie ha ganado o perdido, pasa al siguiente turno
+            // Aquí puedes agregar código para manejar el siguiente turno
+        }
+    }
+
+
+    private void readAndDisplayPlayerInfo() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("playerInfo.ser"))) {
+            PlayerInfo playerInfo = (PlayerInfo) ois.readObject();
+            System.out.println("Información del jugador leída desde el archivo:");
+            System.out.println("Nombre de jugador: " + playerInfo.getPlayerName());
+            System.out.println("Dirección IP del servidor: " + playerInfo.getServerIP());
+            System.out.println("Puerto del servidor: " + playerInfo.getServerPort());
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.out.println("Error al leer la información del jugador desde el archivo.");
+        }
+    }
+
+    private void savePlayerInfo(PlayerInfo playerInfo) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("playerInfo.ser"))) {
+            oos.writeObject(playerInfo);
+            System.out.println("Información del jugador guardada correctamente.");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al guardar la información del jugador.");
+        }
+    }
+
     private void processServerMessage(String message) {
         gamePanel.repaint();
     }
@@ -291,25 +333,8 @@ public class BlackJack {
         }
         return dealerSum;
     }
-    private void savePlayerInfo(PlayerInfo playerInfo) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("playerInfo.ser"))) {
-            oos.writeObject(playerInfo);
-            System.out.println("Información del jugador guardada correctamente.");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al guardar la información del jugador.");
-        }
-    }
-    private void readAndDisplayPlayerInfo() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("playerInfo.ser"))) {
-            PlayerInfo playerInfo = (PlayerInfo) ois.readObject();
-            System.out.println("Información del jugador leída desde el archivo:");
-            System.out.println("Nombre de jugador: " + playerInfo.getPlayerName());
-            System.out.println("Dirección IP del servidor: " + playerInfo.getServerIP());
-            System.out.println("Puerto del servidor: " + playerInfo.getServerPort());
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("Error al leer la información del jugador desde el archivo.");
-        }
-    }
+
+
+
+
 }

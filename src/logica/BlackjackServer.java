@@ -10,7 +10,8 @@ import java.util.List;
 public class BlackjackServer {
     private static final int PORT = 8084;
     private static int playerCount = 0; // Contador de jugadores
-    private static List<PrintWriter> players = new ArrayList<>(); // Lista de jugadores conectados
+    private static List<Player> players = new ArrayList<>(); // Lista de jugadores conectados
+    private static int currentPlayer = 0;
 
     public static void main(String[] args) {
         try {
@@ -28,11 +29,18 @@ public class BlackjackServer {
 
                 // Agrega el jugador a la lista de jugadores conectados
                 PrintWriter playerOutput = new PrintWriter(clientSocket.getOutputStream(), true);
-                players.add(playerOutput);
+                Player player = new Player(clientSocket, playerOutput, "Player " + playerCount, false); // Jugador humano
+                players.add(player);
+
+                // Añade el crupier después de que se hayan conectado los dos jugadores humanos
+                if (playerCount == 2) {
+                    Player dealer = new Player(null, null, "Dealer", true); // Crupier controlado por la máquina
+                    players.add(dealer);
+                }
 
                 // Envía un mensaje a todos los jugadores conectados con la cantidad actual de jugadores
-                for (PrintWriter player : players) {
-                    player.println("Jugadores conectados: " + playerCount);
+                for (Player p : players) {
+                    p.getOutput().println("Jugadores conectados: " + playerCount);
                 }
 
                 // Inicia el juego cuando se conecten 2 jugadores
@@ -46,3 +54,4 @@ public class BlackjackServer {
         }
     }
 }
+
