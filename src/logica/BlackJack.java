@@ -90,6 +90,7 @@ public class BlackJack {
                         message = "You Lose!";
                     }
 
+
                     g.setFont(new Font("Arial", Font.PLAIN, 30));
                     g.setColor(Color.white);
                     g.drawString(message, 220, 250);
@@ -209,18 +210,35 @@ public class BlackJack {
     }
 
     public void nextTurn() {
-        if (playerSum > 21) {
-            resultLabel.setText("¡Has perdido!");
+        if (playerSum > 21 || dealerSum > 21) {
+            resultLabel.setText(playerSum > 21 ? "¡Has perdido!" : "¡Has ganado!");
             gamePanel.repaint();
-            exitMessageTimer.start(); // Inicia el temporizador después de perder
-        } else if (dealerSum > 21) {
-            resultLabel.setText("¡Has ganado!");
+            SwingUtilities.invokeLater(() -> exitMessageTimer.start());
+        } else if (!stayButton.isEnabled()) {
+            dealerSum = reduceDealerAce();
+            playerSum = reducePlayerAce();
+            String message = "";
+            if (playerSum > 21) {
+                message = "¡Has perdido!";
+            } else if (dealerSum > 21) {
+                message = "¡Has ganado!";
+            } else if (playerSum == dealerSum) {
+                message = "Empate";
+            } else if (playerSum > dealerSum) {
+                message = "¡Has ganado!";
+            } else if (playerSum < dealerSum) {
+                message = "¡Has perdido!";
+            }
+            resultLabel.setText(message);
             gamePanel.repaint();
-            exitMessageTimer.start(); // Inicia el temporizador después de ganar
+            SwingUtilities.invokeLater(() -> exitMessageTimer.start());
         } else {
-            // Lógica adicional según tus requisitos
+            // Otras lógicas según tus requisitos
         }
     }
+
+
+
 
 
 
@@ -278,7 +296,6 @@ public class BlackJack {
         System.out.println(dealerSum);
         System.out.println(dealerAceCount);
 
-
         //player
         playerHand = new ArrayList<Card>();
         playerSum = 0;
@@ -295,7 +312,11 @@ public class BlackJack {
         System.out.println(playerHand);
         System.out.println(playerSum);
         System.out.println(playerAceCount);
+
+        // Repinta el panel del juego después de reiniciar
+        gamePanel.repaint();
     }
+
 
     public void buildDeck() {
         deck = new ArrayList<Card>();
@@ -343,30 +364,26 @@ public class BlackJack {
     }
 
     private void showExitMessage() {
-        int choice = JOptionPane.showConfirmDialog(frame, "¿Quieres salir?", "Fin del juego", JOptionPane.YES_NO_OPTION);
-        if (choice == JOptionPane.YES_OPTION) {
-            System.exit(0);
-        } else {
-            // Lógica adicional si el jugador elige no salir
+        exitMessageTimer.stop();
+        SwingUtilities.invokeLater(() -> {
+            int choice = JOptionPane.showConfirmDialog(frame, "¿Quieres salir?", "Fin del juego", JOptionPane.YES_NO_OPTION);
+            if (choice == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            } else {
+                // Lógica adicional si el jugador elige no salir
 
-            // Reactivar los botones para que el jugador pueda seguir jugando
-            hitButton.setEnabled(true);
-            stayButton.setEnabled(true);
-            // Reiniciar el juego llamando al método restartGame()
-            restartGame();
-        }
+                // Reactivar los botones para que el jugador pueda seguir jugando
+                hitButton.setEnabled(true);
+                stayButton.setEnabled(true);
+
+                // Reiniciar el juego con dos cartas para el jugador y el crupier
+                startGame();
+            }
+        });
     }
 
-    private void restartGame() {
-        playerHand.clear();
-        dealerHand.clear();
-        playerSum = 0;
-        dealerSum = 0;
-        playerAceCount = 0;
-        dealerAceCount = 0;
-        gamePanel.repaint();
 
-    }
+
 
 
 
